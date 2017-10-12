@@ -11,6 +11,12 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+#Route::view('/', 'welcome');
+Route::get('/', 'WelcomeController');
+Route::get('/book/', 'BookController@index');
+Route::get('/book/{title}', 'BookController@show');
+
+Route::get('/example', 'BookController@example');
+
+Route::get('/trivia', 'TriviaController@index');
+Route::get('/trivia/check-answer', 'TriviaController@checkAnswer');
