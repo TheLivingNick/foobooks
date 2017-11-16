@@ -1,19 +1,49 @@
 <?php
 
+# https://s3.amazonaws.com/dwa15.com/wireframe-trivia@2x.png
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
 class TriviaController extends Controller
 {
+
+    /**
+    * GET /trivia/
+    */
     public function index()
     {
-      return 'Show form to collect info from user...';
+        $json = file_get_contents(database_path('clues.json'));
+        $clues = json_decode($json, true);
+        $answer = array_rand($clues);
+        $clue = $clues[$answer];
+
+        return view('trivia.index')->with([
+            'clue' => $clue,
+            'answer' => $answer,
+        ]);
     }
 
-    public function checkAnswer()
+
+    /**
+    * GET /trivia/check-answer
+    */
+    public function checkAnswer(Request $request)
     {
-      return 'At this step we should check the answer...';
-      # redirect ...
+        $messages = ['required' => 'You forgot to fill out an answer!'];
+
+        $this->validate($request, [
+            'guess' => 'required'
+        ], $messages);
+
+        $guess = $request->input('guess');
+        $answer = $request->input('answer');
+        $correct = strtolower($guess) == strtolower($answer);
+
+        return view('trivia.result')->with([
+            'correct' => $correct,
+            'answer' => $answer,
+        ]);
     }
 }
